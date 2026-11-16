@@ -1,0 +1,40 @@
+{
+  "experiment_name": "synthetic_baseline",
+  "description": "Offline baseline on a synthetic GJR-GARCH(1,1,1) series with Student-t innovations and two predefined stress regimes.",
+  "data": {
+    "source": "synthetic",
+    "path": "data/synthetic/returns.csv",
+    "metadata_path": "data/synthetic/metadata.json"
+  },
+  "synthetic": {
+    "seed": 42,
+    "mu": 0.0,
+    "omega": 0.02,
+    "alpha": 0.05,
+    "gamma": 0.08,
+    "beta": 0.88,
+    "nu": 8.0,
+    "burn_in": 1000,
+    "n_obs": 3500,
+    "start_date": "2000-01-03",
+    "stress_omega_multiplier": 9.0,
+    "stress_regimes": [
+      {"label": "stress_1", "start_index": 1400, "end_index": 1499},
+      {"label": "stress_2", "start_index": 2500, "end_index": 2599}
+    ]
+  },
+  "backtest": {
+    "window": 1000,
+    "min_residuals": 750,
+    "refit_every": 1,
+    "confidence_levels": [0.95, 0.99],
+    "models": ["HS", "GARCH-FHS", "GJR-FHS"],
+    "rolling_exception_window": 250,
+    "residual_ljung_box_lags": [10, 20],
+    "max_forecasts": null
+  },
+  "monetary": {
+    "notional": 1000000.0
+  },
+  "output_dir": "results/synthetic_baseline"
+}

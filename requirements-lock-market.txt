@@ -1,0 +1,20 @@
+# Additional exact versions installed by the optional market extra (yfinance) for the recorded SPY run.
+# Core packages are unchanged and pinned in requirements-lock.txt. Tested: Python 3.14.4, Windows 11 (AMD64).
+# Install after the core lock: python -m pip install -r requirements-lock-market.txt
+beautifulsoup4==4.15.0
+certifi==2026.10.23
+cffi==2.1.1
+charset-normalizer==3.5.2
+curl_cffi==0.17.0
+idna==3.20
+lxml==6.1.3
+peewee==4.5.3
+platformdirs==4.14.5
+protobuf==7.36.2
+pycparser==3.12
+pytz==2026.6
+requests==2.34.2
+soupsieve==4.1.1
+urllib3==2.8.0
+websockets==17.4
+yfinance==1.8.0

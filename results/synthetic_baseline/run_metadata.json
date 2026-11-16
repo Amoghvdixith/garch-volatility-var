@@ -1,0 +1,155 @@
+{
+  "experiment": "synthetic_baseline",
+  "run_type": "full",
+  "run_type_note": "Full rolling backtest over all available forecast origins.",
+  "synthetic_data": true,
+  "dataset": {
+    "source": "synthetic",
+    "path": "data/synthetic/returns.csv",
+    "sha256": "4df1b68d6be732704a7d30895e792a108409af89e244fb75fcdbf868c0845a6f",
+    "schema": "return",
+    "rows_after_preparation": 3500,
+    "first_date": "2000-01-03",
+    "last_date": "2013-05-31",
+    "input_was_resorted": false,
+    "metadata_path": "data/synthetic/metadata.json",
+    "checksum_matches_metadata": true,
+    "regime_definition": "regime column supplied by the dataset (see data metadata)"
+  },
+  "config_file": "configs/synthetic_baseline.json",
+  "config": {
+    "experiment_name": "synthetic_baseline",
+    "description": "Offline baseline on a synthetic GJR-GARCH(1,1,1) series with Student-t innovations and two predefined stress regimes.",
+    "data": {
+      "source": "synthetic",
+      "path": "data/synthetic/returns.csv",
+      "metadata_path": "data/synthetic/metadata.json"
+    },
+    "synthetic": {
+      "seed": 42,
+      "mu": 0.0,
+      "omega": 0.02,
+      "alpha": 0.05,
+      "gamma": 0.08,
+      "beta": 0.88,
+      "nu": 8.0,
+      "burn_in": 1000,
+      "n_obs": 3500,
+      "start_date": "2000-01-03",
+      "stress_omega_multiplier": 9.0,
+      "stress_regimes": [
+        {
+          "label": "stress_1",
+          "start_index": 1400,
+          "end_index": 1499
+        },
+        {
+          "label": "stress_2",
+          "start_index": 2500,
+          "end_index": 2599
+        }
+      ]
+    },
+    "backtest": {
+      "window": 1000,
+      "min_residuals": 750,
+      "refit_every": 1,
+      "confidence_levels": [
+        0.95,
+        0.99
+      ],
+      "models": [
+        "HS",
+        "GARCH-FHS",
+        "GJR-FHS"
+      ],
+      "rolling_exception_window": 250,
+      "residual_ljung_box_lags": [
+        10,
+        20
+      ],
+      "max_forecasts": null
+    },
+    "monetary": {
+      "notional": 1000000.0
+    },
+    "output_dir": "results/synthetic_baseline"
+  },
+  "seed": 42,
+  "units": {
+    "returns": "percentage-point log returns (1.0 = 1%)",
+    "loss": "loss_pct = -return_pct (negative log return in percentage points; not exact monetary loss)",
+    "volatility": "conditional standard deviation in percentage points",
+    "monetary_mapping": "exact monetary loss = notional * (1 - exp(return_pct / 100)); not used for the tables"
+  },
+  "conventions": {
+    "empirical_distribution": "equal mass 1/n on each scenario",
+    "var": "inverse empirical CDF of loss at c: L_(ceil(n c)) in ascending order",
+    "es": "average of worst (1-c) probability mass with fractional boundary weight; ES >= VaR",
+    "exception": "strict: realised loss > VaR",
+    "quantile_loss": "(c - 1[loss < VaR]) * (loss - VaR)",
+    "mean_model": "zero conditional mean for all methods",
+    "volatility_estimation": "arch package, Gaussian QML, mean='zero', p=1, q=1, o=0 (GARCH) or 1 (GJR), power=2, rescale=False",
+    "fhs": "z_i = eps_i / sigma_i over the training window (no recentring); scenarios sigma_t * z_i; no resampling",
+    "refit": "every forecast origin; training window = previous `window` observations",
+    "rolling_exception_window": 250
+  },
+  "window": 1000,
+  "min_residuals": 750,
+  "forecast_origins": 2500,
+  "first_forecast_date": "2003-11-03",
+  "last_forecast_date": "2013-05-31",
+  "common_sample": {
+    "n_dates_total": 2500,
+    "n_dates_common": 2500,
+    "n_dates_excluded": 0,
+    "excluded_dates": [],
+    "invalid_forecasts_by_model": {},
+    "invalid_forecasts_by_status": {}
+  },
+  "fit_summary": {
+    "GARCH-FHS": {
+      "fits": 2500,
+      "status_counts": {
+        "ok": 2500
+      },
+      "retries_used": 0,
+      "fits_with_warnings": 0,
+      "persistence_min": 0.9339109667367756,
+      "persistence_max": 1.0000000000862672,
+      "fits_with_persistence_at_or_above_one": 470,
+      "fits_at_stationarity_boundary_persistence_ge_0.9999": 737,
+      "persistence_median": 0.9920080965513121
+    },
+    "GJR-FHS": {
+      "fits": 2500,
+      "status_counts": {
+        "ok": 2500
+      },
+      "retries_used": 0,
+      "fits_with_warnings": 0,
+      "persistence_min": 0.9349095825571644,
+      "persistence_max": 1.000000000005044,
+      "fits_with_persistence_at_or_above_one": 416,
+      "fits_at_stationarity_boundary_persistence_ge_0.9999": 642,
+      "persistence_median": 0.989677574477065
+    }
+  },
+  "dependency_versions": {
+    "numpy": "2.5.4",
+    "pandas": "3.1.1",
+    "scipy": "1.18.1",
+    "matplotlib": "3.11.2",
+    "arch": "9.0.0",
+    "statsmodels": "0.15.0",
+    "pytest": "9.2.0"
+  },
+  "garch_fhs_version": "0.1.0",
+  "python_version": "3.14.4",
+  "platform": "Windows 11 (AMD64)",
+  "started_utc": "2026-11-15T09:36:55Z",
+  "finished_utc": "2026-11-15T09:37:47Z",
+  "runtime_seconds": 52.0,
+  "invocation": "python scripts/run_backtest.py --config configs/synthetic_baseline.json",
+  "output_dir": "results/synthetic_baseline"
+}

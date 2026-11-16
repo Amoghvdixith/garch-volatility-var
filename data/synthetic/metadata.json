@@ -1,0 +1,76 @@
+{
+  "dataset": "synthetic GJR-GARCH(1,1,1) with standardised Student-t innovations",
+  "synthetic_data_notice": "SYNTHETIC DATA. These are simulated observations, not market history.",
+  "file": "data/synthetic/returns.csv",
+  "sha256": "4df1b68d6be732704a7d30895e792a108409af89e244fb75fcdbf868c0845a6f",
+  "rows": 3500,
+  "first_date": "2000-01-03",
+  "last_date": "2013-05-31",
+  "date_index": "Synthetic Monday-Friday business-day index from pandas.bdate_range. It is NOT an exchange trading calendar and contains no holidays.",
+  "columns": {
+    "date": "synthetic business date (YYYY-MM-DD)",
+    "return_pct": "simulated log return in percentage points (1.0 = 1%)",
+    "true_vol_pct": "true conditional volatility sigma_t of return_pct, percentage points; known at t-1 in the data-generating process",
+    "stress_flag": "1 inside a predefined stress regime, else 0",
+    "regime": "'normal' or the stress-regime label"
+  },
+  "parameters": {
+    "seed": 42,
+    "mu": 0.0,
+    "omega": 0.02,
+    "alpha": 0.05,
+    "gamma": 0.08,
+    "beta": 0.88,
+    "nu": 8.0,
+    "burn_in": 1000,
+    "n_obs": 3500,
+    "start_date": "2000-01-03",
+    "stress_omega_multiplier": 9.0,
+    "stress_regimes": [
+      {
+        "label": "stress_1",
+        "start_index": 1400,
+        "end_index": 1499
+      },
+      {
+        "label": "stress_2",
+        "start_index": 2500,
+        "end_index": 2599
+      }
+    ]
+  },
+  "process": {
+    "returns": "r_t = mu + eps_t, eps_t = sigma_t * z_t",
+    "variance": "sigma_t^2 = omega_t + (alpha + gamma*1[eps_{t-1}<0]) * eps_{t-1}^2 + beta*sigma_{t-1}^2",
+    "innovations": "z_t = T_t * sqrt((nu-2)/nu), T_t ~ Student-t(nu) via numpy Generator.standard_t",
+    "unit_variance_scale": 0.8660254037844386,
+    "rng": "numpy.random.default_rng(seed); all burn-in + retained shocks drawn in one call",
+    "initialisation": "sigma_0^2 at the first burn-in observation equals the baseline unconditional variance omega/(1 - alpha - gamma/2 - beta); burn-in observations are discarded",
+    "stress_definition": "for retained zero-based indices within each regime (inclusive), omega_t = omega * stress_omega_multiplier; burn-in is never stressed",
+    "stress_note": "Stress regimes are fixed before any forecasting and intentionally depart from a single constant-parameter GJR process."
+  },
+  "admissibility": {
+    "persistence_alpha_plus_half_gamma_plus_beta": 0.97,
+    "finite_variance_condition": "alpha + gamma/2 + beta < 1 (symmetric innovations)",
+    "condition_satisfied": true,
+    "baseline_unconditional_variance": 0.6666666666666661,
+    "stress_omega_unconditional_variance_if_permanent": 5.999999999999995
+  },
+  "sample_statistics_retained": {
+    "return_mean": -0.030935307322797055,
+    "return_std": 0.9858544955551234,
+    "true_vol_min": 0.4573136021369983,
+    "true_vol_max": 3.410286661436733,
+    "stress_observations": 200
+  },
+  "generator": {
+    "package": "garch_fhs",
+    "package_version": "0.1.0",
+    "script": "scripts/generate_synthetic_data.py",
+    "invocation": "python scripts/generate_synthetic_data.py --config configs/synthetic_baseline.json",
+    "python": "3.14.4",
+    "numpy": "2.5.4",
+    "pandas": "3.1.1",
+    "generated_utc": "2026-11-15T09:26:42Z"
+  }
+}

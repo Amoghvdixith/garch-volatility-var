@@ -1,0 +1,160 @@
+{
+  "experiment": "market_example",
+  "run_type": "full",
+  "run_type_note": "Full rolling backtest over all available forecast origins.",
+  "synthetic_data": false,
+  "dataset": {
+    "source": "market",
+    "path": "data/market/spy_daily.csv",
+    "sha256": "db49baad51cd9a4eed16781a937fa3321be8564a18e5836d89ba892e6be427c7",
+    "schema": "price",
+    "rows_after_preparation": 3773,
+    "first_date": "2010-01-05",
+    "last_date": "2024-12-31",
+    "input_was_resorted": false,
+    "metadata_path": "data/market/spy_daily_metadata.json",
+    "checksum_matches_metadata": true,
+    "regime_definition": [
+      {
+        "label": "covid_2020",
+        "start_date": "2020-02-20",
+        "end_date": "2020-04-30"
+      },
+      {
+        "label": "year_2022",
+        "start_date": "2022-01-01",
+        "end_date": "2022-12-31"
+      }
+    ]
+  },
+  "config_file": "configs/market_example.json",
+  "config": {
+    "experiment_name": "market_example",
+    "description": "Optional SPY example. Data must be downloaded locally first (scripts/download_market_data.py) or supplied by the user; nothing here is bundled.",
+    "data": {
+      "source": "market",
+      "path": "data/market/spy_daily.csv",
+      "metadata_path": "data/market/spy_daily_metadata.json"
+    },
+    "market": {
+      "symbol": "SPY",
+      "start_date": "2010-01-01",
+      "end_date_exclusive": "2025-01-01",
+      "price_field": "Adj Close",
+      "provider": "yfinance (Yahoo Finance, unofficial interface)"
+    },
+    "stress_regimes": [
+      {
+        "label": "covid_2020",
+        "start_date": "2020-02-20",
+        "end_date": "2020-04-30"
+      },
+      {
+        "label": "year_2022",
+        "start_date": "2022-01-01",
+        "end_date": "2022-12-31"
+      }
+    ],
+    "backtest": {
+      "window": 1000,
+      "min_residuals": 750,
+      "refit_every": 1,
+      "confidence_levels": [
+        0.95,
+        0.99
+      ],
+      "models": [
+        "HS",
+        "GARCH-FHS",
+        "GJR-FHS"
+      ],
+      "rolling_exception_window": 250,
+      "residual_ljung_box_lags": [
+        10,
+        20
+      ],
+      "max_forecasts": null
+    },
+    "monetary": {
+      "notional": 1000000.0
+    },
+    "output_dir": "results/market_example"
+  },
+  "seed": null,
+  "units": {
+    "returns": "percentage-point log returns (1.0 = 1%)",
+    "loss": "loss_pct = -return_pct (negative log return in percentage points; not exact monetary loss)",
+    "volatility": "conditional standard deviation in percentage points",
+    "monetary_mapping": "exact monetary loss = notional * (1 - exp(return_pct / 100)); not used for the tables"
+  },
+  "conventions": {
+    "empirical_distribution": "equal mass 1/n on each scenario",
+    "var": "inverse empirical CDF of loss at c: L_(ceil(n c)) in ascending order",
+    "es": "average of worst (1-c) probability mass with fractional boundary weight; ES >= VaR",
+    "exception": "strict: realised loss > VaR",
+    "quantile_loss": "(c - 1[loss < VaR]) * (loss - VaR)",
+    "mean_model": "zero conditional mean for all methods",
+    "volatility_estimation": "arch package, Gaussian QML, mean='zero', p=1, q=1, o=0 (GARCH) or 1 (GJR), power=2, rescale=False",
+    "fhs": "z_i = eps_i / sigma_i over the training window (no recentring); scenarios sigma_t * z_i; no resampling",
+    "refit": "every forecast origin; training window = previous `window` observations",
+    "rolling_exception_window": 250
+  },
+  "window": 1000,
+  "min_residuals": 750,
+  "forecast_origins": 2773,
+  "first_forecast_date": "2013-12-24",
+  "last_forecast_date": "2024-12-31",
+  "common_sample": {
+    "n_dates_total": 2773,
+    "n_dates_common": 2773,
+    "n_dates_excluded": 0,
+    "excluded_dates": [],
+    "invalid_forecasts_by_model": {},
+    "invalid_forecasts_by_status": {}
+  },
+  "fit_summary": {
+    "GARCH-FHS": {
+      "fits": 2773,
+      "status_counts": {
+        "ok": 2773
+      },
+      "retries_used": 0,
+      "fits_with_warnings": 0,
+      "persistence_min": 0.872348463671571,
+      "persistence_max": 0.9949324655916896,
+      "fits_with_persistence_at_or_above_one": 0,
+      "fits_at_stationarity_boundary_persistence_ge_0.9999": 0,
+      "persistence_median": 0.9539686087425395
+    },
+    "GJR-FHS": {
+      "fits": 2773,
+      "status_counts": {
+        "ok": 2773
+      },
+      "retries_used": 0,
+      "fits_with_warnings": 0,
+      "persistence_min": 0.9122193056167464,
+      "persistence_max": 1.0000000000145943,
+      "fits_with_persistence_at_or_above_one": 169,
+      "fits_at_stationarity_boundary_persistence_ge_0.9999": 331,
+      "persistence_median": 0.9682911111405508
+    }
+  },
+  "dependency_versions": {
+    "numpy": "2.5.4",
+    "pandas": "3.1.1",
+    "scipy": "1.18.1",
+    "matplotlib": "3.11.2",
+    "arch": "9.0.0",
+    "statsmodels": "0.15.0",
+    "pytest": "9.2.0"
+  },
+  "garch_fhs_version": "0.1.0",
+  "python_version": "3.14.4",
+  "platform": "Windows 11 (AMD64)",
+  "started_utc": "2026-11-15T12:46:39Z",
+  "finished_utc": "2026-11-15T12:47:41Z",
+  "runtime_seconds": 61.8,
+  "invocation": "python scripts/run_backtest.py --config configs/market_example.json",
+  "output_dir": "results/market_example"
+}

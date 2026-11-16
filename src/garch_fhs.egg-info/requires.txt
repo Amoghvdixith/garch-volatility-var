@@ -1,0 +1,12 @@
+numpy
+pandas
+scipy
+matplotlib
+arch
+statsmodels
+
+[dev]
+pytest
+
+[market]
+yfinance
